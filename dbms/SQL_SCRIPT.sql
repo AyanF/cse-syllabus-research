@@ -1,5 +1,5 @@
-CREATE DATABASE ECommerce_DB;
-USE ECommerce_DB;
+CREATE DATABASE db_ecommerce;
+USE db_ecommerce;
 
 -- Creating Clients table
 CREATE TABLE Clients (
@@ -47,14 +47,28 @@ CREATE TABLE Location (
     FOREIGN KEY (ClientID) REFERENCES Clients(ClientID)
 );
 
--- Creating Credentials Table
-CREATE TABLE Credentials (
-    CredentialID INT PRIMARY KEY,
+-- Creating AccountLogins Table
+CREATE TABLE AccountLogins (
+    LoginID INT PRIMARY KEY AUTO_INCREMENT,
     ClientID INT,
-    UserName VARCHAR(50),
-    PassWord VARCHAR(50),
-    UserGroup VARCHAR(50),
+    UserAlias VARCHAR(50) UNIQUE,
+    PasswordHash VARCHAR(100), -- Storing a hashed version of the password
     FOREIGN KEY (ClientID) REFERENCES Clients(ClientID)
+);
+
+-- Creating AccessGroups Table
+CREATE TABLE AccessGroups (
+    GroupID INT PRIMARY KEY AUTO_INCREMENT,
+    GroupName VARCHAR(50)
+);
+
+-- Creating AccountLoginAccessGroups Table
+CREATE TABLE AccountLoginAccessGroups (
+    LoginID INT,
+    GroupID INT,
+    PRIMARY KEY (LoginID, GroupID),
+    FOREIGN KEY (LoginID) REFERENCES AccountLogins(LoginID),
+    FOREIGN KEY (GroupID) REFERENCES AccessGroups(GroupID)
 );
 
 -- Creating Transactions Table
