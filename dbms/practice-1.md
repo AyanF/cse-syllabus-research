@@ -68,4 +68,6 @@
     BillingAddressID INT,
     FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
     FOREIGN KEY (BillingAddressID) REFERENCES Address(AddressID)
+
 );
+![ERDiagram](https://github.com/user-attachments/assets/ee187921-1f1e-400b-be82-5d7eb0ef5a05)
