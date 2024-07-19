@@ -1,5 +1,4 @@
-# Problem - Design a database to manage customer profiles, contact details,
- addresses, and user logins for an e-commerce platform.
+# Problem - Design a database to manage customer profiles, contact details,addresses, and user logins for an e-commerce platform.
 
 # Solution -
 
