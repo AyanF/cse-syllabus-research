@@ -6,37 +6,70 @@ Design a database to manage customer profiles, contact details, addresses, and u
 ## Requirements
 
 1. **Customer Information**
-    - Each customer has a unique identifier.
-    - A customer can have a first name, middle name, and last name.
-    - A customer can have multiple roles (e.g., Customer).
+    CREATE TABLE Customer (
+    CustomerID INT PRIMARY KEY AUTO_INCREMENT,
+    FirstName VARCHAR(50),
+    MiddleName VARCHAR(50),
+    LastName VARCHAR(50)
+);
+
 
 2. **Contact Information**
-    - A customer can have multiple contact mechanisms, including email addresses and phone numbers.
-    - Contact mechanisms should store information like email addresses and phone numbers with associated purposes (e.g., billing, shipping).
+    CREATE TABLE Contactinfo (
+    ContactID INT PRIMARY KEY AUTO_INCREMENT,
+    CustomerID INT,
+    ContactType VARCHAR(50),
+    ContactValue VARCHAR(100),
+    Purpose VARCHAR(50),
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
+);
+
 
 3. **Address Information**
-    - A customer can have multiple addresses.
-    - Addresses should include details such as street address, city, state/province, postal code, and country.
-    - Addresses can have different purposes (e.g., billing, shipping, general correspondence).
+    CREATE TABLE Address (
+    AddressID INT PRIMARY KEY AUTO_INCREMENT,
+    CustomerID INT,
+    AddressType VARCHAR(50),
+    StreetAddress VARCHAR(255),
+    City VARCHAR(100),
+    StateProvince VARCHAR(100),
+    PostalCode VARCHAR(20),
+    Country VARCHAR(100),
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
+);
 
 4. **User Logins**
-    - Each customer can have one or more user logins.
-    - User logins should include a username and password.
-    - Each user login can be associated with one or more security groups that determine access rights to different parts of the system.
+ CREATE TABLE UserLogin (
+    LoginID INT PRIMARY KEY AUTO_INCREMENT,
+    CustomerID INT,
+    Username VARCHAR(50),
+    PasswordHash VARCHAR(255), 
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
+);
 
-5. **Payment Information**
-    - A customer can have multiple payment methods, including credit cards.
-    - Payment information should include details such as credit card number, expiration date, and billing address.
+5. **Insert security group**
+   CREATE TABLE SecurityGroup (
+    GroupID INT PRIMARY KEY AUTO_INCREMENT,
+    GroupName VARCHAR(50)
+);
 
-
-## Deliverables
-
- **ER Diagram**
-    - Create an Entity-Relationship (ER) diagram to represent the tables and relationships.
-
-
-## Instructions
-- Ensure the database design supports all the requirements specified.
-- Focus on data integrity and relationships between tables.
-- Use appropriate data types for each column.
-- Implement primary keys and foreign keys to maintain referential integrity.
+6. **Map customer to security group**
+  CREATE TABLE Customer_SecurityGroups (
+    CustomerID INT,
+    GroupID INT,
+    PRIMARY KEY (CustomerID, GroupID),
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
+    FOREIGN KEY (GroupID) REFERENCES SecurityGroup(GroupID)
+);
+   
+8. **Payment Information**
+    CREATE TABLE PaymentInfo (
+    PaymentMethodID INT PRIMARY KEY AUTO_INCREMENT,
+    CustomerID INT,
+    PaymentType VARCHAR(50),
+    CardNumber VARCHAR(50),
+    ExpirationDate DATE,
+    BillingAddressID INT,
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
+    FOREIGN KEY (BillingAddressID) REFERENCES Address(AddressID)
+);
