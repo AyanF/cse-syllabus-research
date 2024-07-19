@@ -73,3 +73,6 @@ CREATE TABLE PaymentInfo (
     FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
     FOREIGN KEY (BillingAddressID) REFERENCES Address(AddressID)
 );
+
+# ER DIAGRAM
+![ERDiagram](https://github.com/user-attachments/assets/7d82f5b5-9087-4e6a-ba81-b997438b32e4)
