@@ -1,10 +1,6 @@
 # Problem Statement: Designing a Database for E-Commerce Customer Management
 
-## Objective
-Design a database to manage customer profiles, contact details, addresses, and user logins for an e-commerce platform.
-
-## Requirements
-
+# Solution
 1. **Customer Information**
     CREATE TABLE Customer (
     CustomerID INT PRIMARY KEY AUTO_INCREMENT,
