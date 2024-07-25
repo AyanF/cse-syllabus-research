@@ -169,3 +169,119 @@ INSERT INTO Address (CustomerID, StreetAddress, City, StateProvince, PostalCode,
 VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='Mark' AND LastName='Tailor'), 
         '456 boulevard st.', '', 'IL', '62706', 'USA', 'Shipping');
         
+-- Activity 2 :
+
+-- Create a new customer named John Hays
+
+INSERT INTO Customer (FirstName, MiddleName, LastName) 
+VALUES ('John', '', 'Hays');
+
+-- Assign the Customer role to John Hays
+
+INSERT INTO CustomerRole (CustomerID, RoleID) 
+VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='John' AND LastName='Hays'), 
+        (SELECT RoleID FROM Role WHERE RoleName='Customer'));
+
+-- Change John Hays' name to John B Hays
+
+UPDATE Customer 
+SET MiddleName='B' 
+WHERE FirstName='John' AND LastName='Hays';
+
+-- Add an email address to John Hays' profile
+
+INSERT INTO Contact (CustomerID, Email, Purpose) 
+VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='John' AND LastName='Hays'), 
+        'john.hays@example.com', 'Primary Email');
+        
+-- Add a billing phone number to his profile
+
+INSERT INTO Contact (CustomerID, Phone, Purpose) 
+VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='John' AND LastName='Hays'), 
+        '321-654-0987', 'Billing Phone');
+        
+-- Add a shipping phone number to his profile
+
+INSERT INTO Contact (CustomerID, Phone, Purpose) 
+VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='John' AND LastName='Hays'), 
+        '789-012-3456', 'Shipping Phone');
+        
+-- Add a shipping address to his profile
+
+INSERT INTO Address (CustomerID, StreetAddress, City, StateProvince, PostalCode, Country, Purpose) 
+VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='John' AND LastName='Hays'), 
+        '456 Maple St', 'Springfield', 'IL', '62701', 'USA', 'Shipping');
+        
+-- Add a billing address to his profile and Make the billing and shipping addresses the same
+
+INSERT INTO Address (CustomerID, StreetAddress, City, StateProvince, PostalCode, Country, Purpose) 
+VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='John' AND LastName='Hays'), 
+        '456 Maple St', 'Springfield', 'IL', '62701', 'USA', 'Billing');
+        
+-- Change the purpose of the billing address to General correspondence
+
+UPDATE Address 
+SET Purpose='General correspondence' 
+WHERE CustomerID=(SELECT CustomerID FROM Customer WHERE FirstName='John' AND LastName='Hays') 
+  AND Purpose='Billing';
+  
+-- ALTERING THE ADRESS TABLE FOR AUTO INCREMENT
+
+ALTER TABLE Payment 
+MODIFY PaymentID INT AUTO_INCREMENT;
+
+  
+-- Create a credit card record for John Hays
+
+INSERT INTO Payment (CustomerID, CreditCardNumber, ExpirationDate, BillingAddress) 
+VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='John' AND LastName='Hays'), 
+        '4111111111111111', '2025-12-31', '456 Maple St, Springfield, IL, 62701, USA');
+        
+-- ALTERING THE ADRESS TABLE FOR AUTO INCREMENT
+
+ALTER TABLE UserLogin 
+MODIFY LoginID INT AUTO_INCREMENT;
+
+
+-- Add a user login for John Hays
+
+INSERT INTO UserLogin (CustomerID, Username, Password, SecurityGroup) 
+VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='John' AND LastName='Hays'), 
+        'john.hays', 'password123', 'Customer Management');
+        
+-- Verify access for John Hays to the customer management application
+
+SELECT * FROM UserLogin 
+WHERE CustomerID=(SELECT CustomerID FROM Customer WHERE FirstName='John' AND LastName='Hays') 
+  AND SecurityGroup='Customer Management';
+  
+-- Delete the current email address and add a new one
+
+DELETE FROM Contact 
+WHERE CustomerID=(SELECT CustomerID FROM Customer WHERE FirstName='John' AND LastName='Hays') 
+  AND Purpose='Primary Email';
+  
+INSERT INTO Contact (CustomerID, Email, Purpose) 
+VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='John' AND LastName='Hays'), 
+        'new.john.hays@example.com', 'Primary Email');
+        
+-- Delete the current billing address and add a new one
+
+DELETE FROM Address 
+WHERE CustomerID=(SELECT CustomerID FROM Customer WHERE FirstName='John' AND LastName='Hays') 
+  AND Purpose='General correspondence';
+  
+INSERT INTO Address (CustomerID, StreetAddress, City, StateProvince, PostalCode, Country, Purpose) 
+VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='John' AND LastName='Hays'), 
+        '789 Birch St', 'Springfield', 'IL', '62702', 'USA', 'General correspondence');
+        
+-- Delete the current shipping address and add a new one:
+
+DELETE FROM Address 
+WHERE CustomerID=(SELECT CustomerID FROM Customer WHERE FirstName='John' AND LastName='Hays') 
+  AND Purpose='Shipping';
+  
+INSERT INTO Address (CustomerID, StreetAddress, City, StateProvince, PostalCode, Country, Purpose) 
+VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='John' AND LastName='Hays'), 
+        '1010 Pine St', 'Springfield', 'IL', '62703', 'USA', 'Shipping');
+        
