@@ -10,25 +10,66 @@ Mark Tailor is a new customer on your e-commerce platform. You need to create hi
 
 ### Tasks
 1. **Create Customer Profile**
-    - Create a new customer named **Mark Tailor**.
-    - Assign the **Customer** role to Mark Tailor.
+   CREATE TABLE customers (
+    customer_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_name VARCHAR(100) NOT NULL,
+    role VARCHAR(50) NOT NULL
+);
+    INSERT INTO customers (customer_name, role) #autoincrement customerid 
+    VALUES ('Mark Tailor', 'Customer');
 
-2. **Update Customer Name**
-    - Change Mark Tailor's name to **Mark K Tailor**.
 
-3. **Add Contact Information**
-    - Add an email address to Mark Tailor's profile.
-    - Add a billing phone number to his profile.
-    - Add a shipping phone number to his profile.
-    - Add a shipping address to his profile.
-    - Add a billing address to his profile.
-    - Make the billing and shipping addresses the same.
-    - Change the purpose of the billing address to **General correspondence**.
+3. **Update Customer Name**
+UPDATE customers
+SET customer_name = 'Mark K Tailor'
+WHERE customer_name = 'Mark Tailor';
 
-4. **Modify Contact Information**
+
+4. **Add Contact Information**
+    CREATE TABLE contact_information (
+    contact_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    email VARCHAR(100),
+    billing_phone VARCHAR(20),
+    shipping_phone VARCHAR(20),
+    billing_address_id VARCHAR(255),
+    shipping_address_id VARCHAR(255),
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+);
+CREATE TABLE addresses (
+    address_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    address_type VARCHAR(50) NOT NULL,
+    address_details VARCHAR(255) NOT NULL,
+    purpose VARCHAR(100),
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+);
+INSERT INTO contact_information (customer_id, email, billing_phone, shipping_phone, billing_address_id, shipping_address_id)
+VALUES (@mark_customer_id, 'mark@example.com', '1234567890', '9876543210', 1, 2
+);
+INSERT INTO addresses (customer_id, address_type, address_details, purpose)
+VALUES (@mark_customer_id, 'Billing', '123 Billing St, City, Country', 'General correspondence');
+INSERT INTO addresses (customer_id, address_type, address_details, purpose)
+VALUES (@mark_customer_id, 'Shipping', '456 Shipping Ave, City, Country', 'Shipping address'
+);
+
+6. **Modify Contact Information**
     - Delete the current email address and add a new one.
+      UPDATE contact_information
+     SET email = 'mark.k@example.com'
+     WHERE customer_id = @mark_customer_id;
+
     - Delete the current billing address and add a new one.
+      DELETE FROM addresses
+    WHERE customer_id = @mark_customer_id AND address_type = 'Billing';
+    INSERT INTO addresses (customer_id, address_type, address_details, purpose)
+    VALUES (@mark_customer_id, 'Billing', '789 New Billing Rd, City, Country', 'General correspondence');
     - Delete the current shipping address and add a new one.
+      DELETE FROM addresses
+    WHERE customer_id = @mark_customer_id AND address_type = 'Shipping';
+
+    INSERT INTO addresses (customer_id, address_type, address_details, purpose)
+    VALUES (@mark_customer_id, 'Shipping', '012 New Shipping Blvd, City, Country', 'Shipping address');
 
 ## Activity - 2: Advanced Customer Management for John Hays
 
@@ -37,33 +78,67 @@ John Hays is an existing customer who requires more advanced management, includi
 
 ### Tasks
 1. **Create Customer Profile**
-    - Create a new customer named **John Hays**.
-    - Assign the **Customer** role to John Hays.
+    INSERT INTO customers (customer_name, role)
+    VALUES ('John Hays', 'Customer');
+    SET @john_customer_id = LAST_INSERT_ID();
 
-2. **Update Customer Name**
-    - Change John Hays' name to **John B Hays**.
+3. **Update Customer Name**
+    UPDATE customers
+    SET customer_name = 'John B Hays'
+    WHERE customer_id = @john_customer_id;
 
-3. **Add Contact Information**
-    - Add an email address to John Hays' profile.
-    - Add a billing phone number to his profile.
-    - Add a shipping phone number to his profile.
-    - Add a shipping address to his profile.
-    - Add a billing address to his profile.
-    - Make the billing and shipping addresses the same.
-    - Change the purpose of the billing address to **General correspondence**.
+4. **Add Contact Information**
+   INSERT INTO contact_information (customer_id, email, billing_phone, shipping_phone)
+   VALUES (@john_customer_id, 'john.hays@example.com', '1234567890', '9876543210');
 
-4. **Add Payment Information**
-    - Create a credit card record for John Hays.
+   INSERT INTO addresses (customer_id, address_type, address_details, purpose)
+   VALUES (@john_customer_id, 'Billing', '123 Billing St, City, Country', 'General correspondence');
+   
+    INSERT INTO addresses (customer_id, address_type, address_details, purpose)
+    VALUES (@john_customer_id, 'Shipping', '456 Shipping Ave, City, Country', 'Shipping address');
 
-5. **Manage System Access**
-    - Add a user login for John Hays.
-    - Assign a security group that allows access to the customer management application.
-    - Verify access for John Hays to the customer management application.
+    UPDATE addresses
+    SET address_details = '456 Shipping Ave, City, Country'
+    WHERE customer_id = @john_customer_id AND address_type = 'Billing';
 
-6. **Modify Contact Information**
+6. **Add Payment Information**
+    CREATE TABLE credit_cards (
+    card_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    card_number VARCHAR(20) NOT NULL,
+    expiration_date DATE NOT NULL,
+    security_code VARCHAR(4) NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+);
+    INSERT INTO credit_cards (customer_id, card_number, expiration_date, security_code)
+    VALUES (@john_customer_id, '1234567890123456', '2025-12-31', '123');
+
+7. **Manage System Access**
+    INSERT INTO user_logins (customer_id, username, password)
+    VALUES (@john_customer_id, 'john_hays', 'password123');
+
+    INSERT INTO customer_security_groups (customer_id, group_id)
+    VALUES (@john_customer_id, 1);
+
+8. **Modify Contact Information**
     - Delete the current email address and add a new one.
+    UPDATE contact_information
+    SET email = 'john.b.hays@example.com'
+    WHERE customer_id = @john_customer_id;
+
     - Delete the current billing address and add a new one.
+    DELETE FROM addresses
+    WHERE customer_id = @john_customer_id AND address_type = 'Billing';
+
+    INSERT INTO addresses (customer_id, address_type, address_details, purpose)
+    VALUES (@john_customer_id, 'Billing', '789 New Billing Rd, City, Country', 'General correspondence');
+
     - Delete the current shipping address and add a new one.
+    DELETE FROM addresses
+    WHERE customer_id = @john_customer_id AND address_type = 'Shipping';
+
+    INSERT INTO addresses (customer_id, address_type, address_details, purpose)
+    VALUES (@john_customer_id, 'Shipping', '012 New Shipping Blvd, City, Country', 'Shipping address'); 
 
 ## Activity - 3: Comprehensive Customer Management for David Zeneski
 
@@ -72,36 +147,74 @@ David Zeneski is a new customer who requires a comprehensive setup, including mu
 
 ### Tasks
 1. **Create Customer Profile**
-    - Create a new customer named **David Zeneski**.
-    - Assign the **Customer** role to David Zeneski.
+    INSERT INTO customers (customer_name, role)
+    VALUES ('David Zeneski', 'Customer');
+    SET @david_customer_id = LAST_INSERT_ID();
 
-2. **Update Customer Name**
-    - Change David Zeneski's name to **David R Zeneski**.
+3. **Update Customer Name**
+    UPDATE customers
+    SET customer_name = 'David R Zeneski'
+    WHERE customer_id = @david_customer_id;
 
-3. **Add Contact Information**
-    - Add an email address to David Zeneski's profile.
-    - Add a billing phone number to his profile.
-    - Add a shipping phone number to his profile.
-    - Add a shipping address to his profile.
-    - Add a billing address to his profile.
-    - Make the billing and shipping addresses the same.
-    - Change the purpose of the billing address to **General correspondence**.
+4. **Add Contact Information**
+    INSERT INTO contact_information (customer_id, email, billing_phone, shipping_phone)
+    VALUES (@david_customer_id, 'david.zeneski@example.com', '1234567890', '9876543210');
 
-4. **Add Payment Information**
-    - Create a credit card record for David Zeneski.
+    INSERT INTO addresses (customer_id, address_type, address_details, purpose)
+    VALUES (@david_customer_id, 'Billing', '123 Billing St, City, Country', 'General correspondence');
 
-5. **Manage System Access**
-    - Add two user logins for David Zeneski.
-    - Assign one login access to the order management application and the other to the customer management application.
-    - Verify access for both logins to their respective applications.
+    INSERT INTO addresses (customer_id, address_type, address_details, purpose)
+    VALUES (@david_customer_id, 'Shipping', '456 Shipping Ave, City, Country', 'Shipping address');
 
-6. **Modify Contact Information**
+    UPDATE addresses
+    SET address_details = '456 Shipping Ave, City, Country'
+    WHERE customer_id = @david_customer_id AND address_type = 'Billing';
+   
+6. **Add Payment Information**
+    CREATE TABLE IF NOT EXISTS credit_cards (
+    card_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    card_number VARCHAR(20) NOT NULL,
+    expiration_date DATE NOT NULL,
+    security_code VARCHAR(4) NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+);
+    INSERT INTO credit_cards (customer_id, card_number, expiration_date, security_code)
+    VALUES (@david_customer_id, '1234567890123456', '2025-12-31', '123');    
+        
+7. **Manage System Access**
+    INSERT INTO user_logins (customer_id, username, password)
+    VALUES (@david_customer_id, 'dzeneski_order', 'orderpassword123'),
+           (@david_customer_id, 'dzeneski_customer', 'customerpassword456');
+   
+    INSERT INTO application_access (login_id, application_name)
+    SELECT login_id, application_name
+    FROM user_logins
+    WHERE customer_id = @david_customer_id;
+   
+    UPDATE application_access
+    SET application_name = CASE 
+    WHEN login_id IN (SELECT login_id FROM user_logins WHERE customer_id = @david_customer_id      AND username = 'dzeneski_order') THEN 'Order Management'
+    WHEN login_id IN (SELECT login_id FROM user_logins WHERE customer_id = @david_customer_id      AND username = 'dzeneski_customer') THEN 'Customer Management'
+    ELSE application_name
+    END;
+
+9. **Modify Contact Information**
     - Delete the current email address and add a new one.
+      UPDATE contact_information
+    SET email = 'david.r.zeneski@example.com'
+    WHERE customer_id = @david_customer_id;
+
     - Delete the current billing address and add a new one.
+      DELETE FROM addresses
+    WHERE customer_id = @david_customer_id AND address_type = 'Billing';
+
+    INSERT INTO addresses (customer_id, address_type, address_details, purpose)
+    VALUES (@david_customer_id, 'Billing', '789 New Billing Rd, City, Country', 'General correspondence');
+   
     - Delete the current shipping address and add a new one.
+      DELETE FROM addresses
+      WHERE customer_id = @david_customer_id AND address_type = 'Shipping';
 
-## Detailed SQL Instructions
-
-For each task, perform the necessary SQL operations to create, update, and delete records in the relevant tables.
-
-
+      INSERT INTO addresses (customer_id, address_type, address_details, purpose)
+      VALUES (@david_customer_id, 'Shipping', '012 New Shipping Blvd, City, Country', 'Shipping address');
