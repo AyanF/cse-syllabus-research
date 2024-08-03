@@ -285,3 +285,93 @@ INSERT INTO Address (CustomerID, StreetAddress, City, StateProvince, PostalCode,
 VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='John' AND LastName='Hays'), 
         '1010 Pine St', 'Springfield', 'IL', '62703', 'USA', 'Shipping');
         
+-- Activity 3
+
+-- Create a new customer named David Zeneski
+INSERT INTO Customer (FirstName, MiddleName, LastName) 
+VALUES ('David', '', 'Zeneski');
+
+-- Assign the Customer role to David Zeneski
+INSERT INTO CustomerRole (CustomerID, RoleID) 
+VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='David' AND LastName='Zeneski'), 
+        (SELECT RoleID FROM Role WHERE RoleName='Customer'));
+        
+-- Change David Zeneski's name to David R Zeneski:
+UPDATE Customer 
+SET MiddleName='R' 
+WHERE FirstName='David' AND LastName='Zeneski';
+
+-- Add an email address to David Zeneski's profile
+INSERT INTO Contact (CustomerID, Email, Purpose) 
+VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='David' AND LastName='Zeneski'), 
+        'david.zeneski@example.com', 'Primary Email');
+
+-- Add a billing phone number to his profile
+INSERT INTO Contact (CustomerID, Phone, Purpose) 
+VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='David' AND LastName='Zeneski'), 
+        '123-456-7890', 'Billing Phone');
+
+-- Add a shipping phone number to his profile:
+INSERT INTO Contact (CustomerID, Phone, Purpose) 
+VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='David' AND LastName='Zeneski'), 
+        '098-765-4321', 'Shipping Phone');
+
+-- Add a shipping address to his profile:
+INSERT INTO Address (CustomerID, StreetAddress, City, StateProvince, PostalCode, Country, Purpose) 
+VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='David' AND LastName='Zeneski'), 
+        '789 Pine St', 'Springfield', 'IL', '62703', 'USA', 'Shipping');
+
+-- Add a billing address to his profile & Make the billing and shipping addresses the same
+INSERT INTO Address (CustomerID, StreetAddress, City, StateProvince, PostalCode, Country, Purpose) 
+VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='David' AND LastName='Zeneski'), 
+        '789 Pine St', 'Springfield', 'IL', '62703', 'USA', 'Billing');
+        
+-- Change the purpose of the billing address to General correspondence
+UPDATE Address 
+SET Purpose='General correspondence' 
+WHERE CustomerID=(SELECT CustomerID FROM Customer WHERE FirstName='David' AND LastName='Zeneski') 
+  AND Purpose='Billing';
+  
+-- Create a credit card record for David Zeneski:
+INSERT INTO Payment (CustomerID, CreditCardNumber, ExpirationDate, BillingAddress) 
+VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='David' AND LastName='Zeneski'), 
+        '4111111111111111', '2026-01-31', '789 Pine St, Springfield, IL, 62703, USA');
+
+-- Add two user logins for David Zeneski:
+INSERT INTO UserLogin (CustomerID, Username, Password, SecurityGroup) 
+VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='David' AND LastName='Zeneski'), 
+        'david.orders', 'password123', 'Order Management'),
+       ((SELECT CustomerID FROM Customer WHERE FirstName='David' AND LastName='Zeneski'), 
+        'david.customers', 'password123', 'Customer Management');
+
+-- Verify access for both logins to their respective applications
+SELECT * FROM UserLogin 
+WHERE CustomerID=(SELECT CustomerID FROM Customer WHERE FirstName='David' AND LastName='Zeneski');
+
+-- Delete the current email address and add a new one
+DELETE FROM Contact 
+WHERE CustomerID=(SELECT CustomerID FROM Customer WHERE FirstName='David' AND LastName='Zeneski') 
+  AND Purpose='Primary Email';
+  
+INSERT INTO Contact (CustomerID, Email, Purpose) 
+VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='David' AND LastName='Zeneski'), 
+        'new.david.zeneski@example.com', 'Primary Email');
+        
+-- Delete the current billing address and add a new one:
+DELETE FROM Address 
+WHERE CustomerID=(SELECT CustomerID FROM Customer WHERE FirstName='David' AND LastName='Zeneski') 
+  AND Purpose='General correspondence';
+  
+INSERT INTO Address (CustomerID, StreetAddress, City, StateProvince, PostalCode, Country, Purpose) 
+VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='David' AND LastName='Zeneski'), 
+        '456 Maple St', 'Springfield', 'IL', '62704', 'USA', 'General correspondence');
+        
+-- Delete the current shipping address and add a new one:
+DELETE FROM Address 
+WHERE CustomerID=(SELECT CustomerID FROM Customer WHERE FirstName='David' AND LastName='Zeneski') 
+  AND Purpose='Shipping';
+  
+INSERT INTO Address (CustomerID, StreetAddress, City, StateProvince, PostalCode, Country, Purpose) 
+VALUES ((SELECT CustomerID FROM Customer WHERE FirstName='David' AND LastName='Zeneski'), 
+        '123 Elm St', 'Springfield', 'IL', '62705', 'USA', 'Shipping');
+        
